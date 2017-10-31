@@ -37,16 +37,11 @@ namespace Reflection.Tests
         }
 
         class Manager : Employee {
-            public Programmer Programmer { get; private set; }
-            public Manager(string firstName, string lastName, Programmer programmer) :  base(firstName, lastName) {
-                this.Programmer = programmer;
+            public Manager(string firstName, string lastName) :  base(firstName, lastName) {
             }
         }
 
-        class Programmer: Employee
-        {
-            public Programmer(string firstName, string lastName):base(firstName, lastName) {}
-        }
+        
 
         class Programmer : Manager
         {
@@ -66,7 +61,7 @@ namespace Reflection.Tests
         [TestCategory("GetProperty method")]
         public void GetProperty_Should_Return_Property_Value_For_Single_Path()
         {
-            var manager = new Manager("Joe", "Smith", new Programmer("Andrew", "Likhtar"));
+            var manager = new Manager("Joe", "Smith");
             var expected = manager.FirstName;
             var actual = manager.GetPropertyValue<string>("FirstName");
             Assert.AreEqual(expected, actual);
@@ -76,11 +71,10 @@ namespace Reflection.Tests
         [TestCategory("GetProperty method")]
         public void GetProperty_Should_Return_Property_Value_For_Complex_Path()
         {
-            var programmer = new Programmer("Andrew", "Likhtar");
-            var manager = new Manager("Joe", "Smith", programmer);
+            var manager = new Manager("Joe", "Smith");
             var worker = new Worker("Willy", "Brown", manager);
-            var expected = worker.Manager.Programmer.FirstName;
-            var actual = worker.GetPropertyValue<string>("Manager.Programmer.FirstName");
+            var expected = worker.Manager.FirstName;
+            var actual = worker.GetPropertyValue<string>("Manager.FirstName");
             Assert.AreEqual(expected, actual);
         }
         #endregion GetProperty tests
@@ -90,7 +84,7 @@ namespace Reflection.Tests
         [TestCategory("SetProperty method")]
         public void SetProperty_Should_Assign_Value_For_Single_Public_Path()
         {
-            var manager = new Manager("Joe", "Smith", new Programmer("Andrew", "Likhtar"));
+            var manager = new Manager("Joe", "Smith");
             var expected = "Alex";
 
             manager.SetPropertyValue("FirstName", expected);
@@ -103,13 +97,13 @@ namespace Reflection.Tests
         [TestCategory("SetProperty method")]
         public void GetProperty_Should_Assign_Value_For_Complex_Path()
         {
-            var manager = new Manager("Joe", "Smith", new Programmer("Andrew", "Likhtar"));
+            var manager = new Manager("Joe", "Smith");
             var worker = new Worker("Willy", "Brown", manager);
             var expected = "Alex";
 
-            worker.SetPropertyValue("Manager.Programmer.FirstName", expected);
+            worker.SetPropertyValue("Manager.FirstName", expected);
 
-            var actual = worker.Manager.Programmer.FirstName;
+            var actual = worker.Manager.FirstName;
             Assert.AreEqual(expected, actual);
         }
 
@@ -118,7 +112,7 @@ namespace Reflection.Tests
         [TestCategory("SetProperty method")]
         public void SetProperty_Should_Assign_Value_For_Single_Private_Path()
         {
-            var manager = new Manager("Joe", "Smith", new Programmer("Andrew", "Likhtar"));
+            var manager = new Manager("Joe", "Smith");
             var expected = "Johnson";
             
             manager.SetPropertyValue("LastName", expected);
